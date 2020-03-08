@@ -69,7 +69,7 @@ namespace MoonSharp.Interpreter.Interop
 			if (!Framework.Do.IsValueType(valueType))
 				throw new ArgumentException("valueType is not a value type");
 
-			this.Name = "__new";
+			this.Name = valueType.Name;
 			this.Parameters = new ParameterDescriptor[0];
 
 			ValueTypeDefaultCtor = valueType;

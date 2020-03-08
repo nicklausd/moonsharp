@@ -64,13 +64,15 @@ namespace MoonSharp.Interpreter.Interop
 					if (membersToIgnore.Contains("__new"))
 						continue;
 
-					AddMember("__new", MethodMemberDescriptor.TryCreateIfVisible(ci, this.AccessMode));
-				}
+                    //AddMember("__new", MethodMemberDescriptor.TryCreateIfVisible(ci, this.AccessMode));
+                    AddMember(type.Name, MethodMemberDescriptor.TryCreateIfVisible(ci, this.AccessMode));
+                }
 
 				// valuetypes don't reflect their empty ctor.. actually empty ctors are a perversion, we don't care and implement ours
 				if (Framework.Do.IsValueType(type) && !membersToIgnore.Contains("__new"))
-					AddMember("__new", new ValueTypeDefaultCtorMemberDescriptor(type));
-			}
+                    AddMember(type.Name, new ValueTypeDefaultCtorMemberDescriptor(type));
+                //AddMember("__new", new ValueTypeDefaultCtorMemberDescriptor(type));
+            }
 
 
 			// add methods to method list and metamethods

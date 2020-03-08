@@ -37,7 +37,7 @@ namespace MoonSharp.Interpreter.Interop
 			public int HitIndexAtLastHit;
 		}
 
-		private List<IOverloadableMemberDescriptor> m_Overloads = new List<IOverloadableMemberDescriptor>();
+		public List<IOverloadableMemberDescriptor> m_Overloads = new List<IOverloadableMemberDescriptor>();
 		private List<IOverloadableMemberDescriptor> m_ExtOverloads = new List<IOverloadableMemberDescriptor>();
 		private bool m_Unsorted = true;
 		private OverloadCacheItem[] m_Cache = new OverloadCacheItem[CACHE_SIZE];

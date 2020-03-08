@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using MoonSharp.Interpreter.CoreLib;
 using MoonSharp.Interpreter.Debugging;
 using MoonSharp.Interpreter.Diagnostics;
 using MoonSharp.Interpreter.Execution.VM;
+using MoonSharp.Interpreter.Interop;
 using MoonSharp.Interpreter.IO;
 using MoonSharp.Interpreter.Platforms;
 using MoonSharp.Interpreter.Tree.Expressions;
 using MoonSharp.Interpreter.Tree.Fast_Interface;
+using MoonSharp.Interpreter.Interop.UserDataRegistries;
 
 namespace MoonSharp.Interpreter
 {
@@ -75,7 +78,47 @@ namespace MoonSharp.Interpreter
 			m_ByteCode = new ByteCode(this);
 			m_MainProcessor = new Processor(this, m_GlobalTable, m_ByteCode);
 			m_GlobalTable = new Table(this).RegisterCoreModules(coreModules);
-		}
+            foreach (var t in TypeDescriptorRegistry.RegisteredTypes)
+            {
+                Type valType = t.Value.Type;
+                if (valType.GetTypeInfo().Assembly.FullName != typeof(Script).GetTypeInfo().Assembly.FullName)
+                {
+                    // m_GlobalTable.RegisterModuleType(t.Value.Type);
+					if(t.Value is StandardUserDataDescriptor)
+					{
+						StandardUserDataDescriptor desc = (StandardUserDataDescriptor)t.Value;
+						foreach(var member in desc.Members)
+						{
+							if(member.Value is MethodMemberDescriptor)
+							{
+								MethodMemberDescriptor methDesc = (MethodMemberDescriptor)member.Value;
+								if(methDesc.IsConstructor)
+								{
+									m_GlobalTable.Set(methDesc.Name, methDesc.GetCallbackAsDynValue(this));
+								}
+							}
+							else if(member.Value is OverloadedMethodMemberDescriptor)
+							{
+								OverloadedMethodMemberDescriptor methDesc = (OverloadedMethodMemberDescriptor)member.Value;
+								foreach(var overloadDesc in methDesc.m_Overloads)
+								{
+									if(overloadDesc is MethodMemberDescriptor)
+									{
+										MethodMemberDescriptor actualDesc = (MethodMemberDescriptor)overloadDesc;
+										if(actualDesc.IsConstructor)
+										{
+											//m_GlobalTable.Set(desc.FriendlyName, actualDesc.GetCallbackAsDynValue(this));
+											m_GlobalTable.Set(desc.FriendlyName, DynValue.NewCallback(methDesc.GetCallbackFunction(this)));
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+                }
+            }
+        }
 
 
 		/// <summary>

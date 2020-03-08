@@ -1,4 +1,11 @@
-MoonSharp       [![Build Status](https://travis-ci.org/xanathar/moonsharp.svg?branch=master)](https://travis-ci.org/xanathar/moonsharp) [![Build Status](https://img.shields.io/nuget/v/MoonSharp.svg)](https://www.nuget.org/packages/MoonSharp/)
+**DISCLAIMER**: This is a fork of the original [MoonSharp project](https://github.com/moonsharp-devs/moonsharp) that I have written in order to support features that I need for my own projects. I make no guarantees about keeping it up to date with the original MoonSharp repository, and I make no guarantees about the stability of the features that I have added. My extensions are mostly thrown on top of MoonSharp in ways that are almost definitely not efficient or safe.
+
+Below are the differences between this fork and the standard MoonSharp project:
+* Support for instantiating user classes within a Lua script by calling the class name as the constructor. For example, you can write `testObj = MyClass(...)` within a Lua script to instantiate an object of `MyClass`. This addition was thrown together quickly and likely insecurely and I do not recommend using this fork as-is for this, as it changes the accessibility of `m_Overloads` within the `OverloadedMethodMemberDescriptor` class. Additionally, the method it uses to add user classes to scripts is not efficient, so for a large number of registered classes, it is possible that script instantiation will cause a large performance hit.
+
+I have maintained the original MoonSharp readme from when I forked this repo below (minus links to CI an nuget status, as this fork will not have the same status as the original project for that).
+
+MoonSharp
 =========
 http://www.moonsharp.org   
 

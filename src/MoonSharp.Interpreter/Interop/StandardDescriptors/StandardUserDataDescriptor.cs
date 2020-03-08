@@ -61,15 +61,17 @@ namespace MoonSharp.Interpreter.Interop
 				// add declared constructors
 				foreach (ConstructorInfo ci in Framework.Do.GetConstructors(type))
 				{
-					if (membersToIgnore.Contains("__new"))
+					if (membersToIgnore.Contains(type.Name))
 						continue;
 
-					AddMember("__new", MethodMemberDescriptor.TryCreateIfVisible(ci, this.AccessMode));
+                    //AddMember("__new", MethodMemberDescriptor.TryCreateIfVisible(ci, this.AccessMode));
+                    AddMember(type.Name, MethodMemberDescriptor.TryCreateIfVisible(ci, this.AccessMode));
 				}
 
-				// valuetypes don't reflect their empty ctor.. actually empty ctors are a perversion, we don't care and implement ours
-				if (Framework.Do.IsValueType(type) && !membersToIgnore.Contains("__new"))
-					AddMember("__new", new ValueTypeDefaultCtorMemberDescriptor(type));
+                // valuetypes don't reflect their empty ctor.. actually empty ctors are a perversion, we don't care and implement ours
+                if (Framework.Do.IsValueType(type) && !membersToIgnore.Contains(type.Name))
+                    AddMember(type.Name, new ValueTypeDefaultCtorMemberDescriptor(type));
+					//AddMember("__new", new ValueTypeDefaultCtorMemberDescriptor(type));
 			}
 
 
